@@ -1,0 +1,7 @@
+# traefik/dynamic/middleware.yml
+http:
+  middlewares:
+    auth-forward:
+      forwardAuth:
+        address: "http://auth-service:3000/validate"
+        trustForwardHeader: true

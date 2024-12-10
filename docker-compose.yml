@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  traefik:
+    image: traefik:latest
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "8080:8080" # Port du dashboard Traefik
+      - "80:80"     # Port HTTP
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      # Règle de routage : quand on tape http://example.com -> ce service
+      - "traefik.http.routers.auth-service.rule=Host(`localhost`)"
+      # On utilise l'entrypoint 'web' défini pour Traefik (port 80)
+      - "traefik.http.routers.auth-service.entrypoints=web"
+      # Définir le port interne sur lequel le service écoute (3000 dans ce cas)
+      - "traefik.http.services.auth-service.loadbalancer.server.port=3000"
+    networks:
+      - web
+
+  whoami:
+    image: traefik/whoami
+    container_name: whoami
+    labels:
+      - "traefik.enable=true"
+      # Route vers /whoami sur le host "localhost" (ou autre)
+      - "traefik.http.routers.whoami.rule=Host(`localhost`) && PathPrefix(`/whoami`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      # Ajout du middleware forwardAuth
+      - "traefik.http.routers.whoami.middlewares=auth-forward@file"
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
