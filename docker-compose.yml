@@ -20,8 +20,6 @@ services:
   auth-service:
     build: ./auth-service
     container_name: auth-service
-    ports:
-      - "3000:3000"
     labels:
       - "traefik.enable=true"
       # Règle de routage : quand on tape http://example.com -> ce service
@@ -46,19 +44,6 @@ services:
       - "traefik.http.routers.credits-service.entrypoints=web"
       # Définir le port interne sur lequel le service écoute (3001 dans ce cas)
       - "traefik.http.services.credits-service.loadbalancer.server.port=3001"
-    networks:
-      - web
-
-  whoami:
-    image: traefik/whoami
-    container_name: whoami
-    labels:
-      - "traefik.enable=true"
-      # Route vers /whoami sur le host "localhost" (ou autre)
-      - "traefik.http.routers.whoami.rule=Host(`localhost`) && PathPrefix(`/whoami`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      # Ajout du middleware forwardAuth
-      - "traefik.http.routers.whoami.middlewares=auth-forward@file"
     networks:
       - web
 
