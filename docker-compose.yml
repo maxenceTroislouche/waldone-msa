@@ -33,6 +33,22 @@ services:
     networks:
       - web
 
+  credits-service:
+    build: ./credits-service
+    container_name: credits-service
+    environment:
+      PORT: 3001
+    labels:
+      - "traefik.enable=true"
+      # Règle de routage : quand on tape http://example.com -> ce service
+      - "traefik.http.routers.credits-service.rule=Host(`localhost`) && PathPrefix(`/credits`)"
+      # On utilise l'entrypoint 'web' défini pour Traefik (port 80)
+      - "traefik.http.routers.credits-service.entrypoints=web"
+      # Définir le port interne sur lequel le service écoute (3001 dans ce cas)
+      - "traefik.http.services.credits-service.loadbalancer.server.port=3001"
+    networks:
+      - web
+
   whoami:
     image: traefik/whoami
     container_name: whoami
