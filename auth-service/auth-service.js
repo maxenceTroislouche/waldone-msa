@@ -6,7 +6,7 @@ app.use(express.json());
 
 const SECRET = process.env.JWT_SECRET || 'changeme';
 
-app.post('/login', (req, res) => {
+app.post('/auth/login', (req, res) => {
   const { username } = req.body;
   if(!username) return res.status(400).json({ error: 'Missing username' });
 
@@ -14,7 +14,7 @@ app.post('/login', (req, res) => {
   res.json({ token });
 });
 
-app.get('/validate', (req, res) => {
+app.get('/auth/validate', (req, res) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) {
     return res.status(401).send('No token provided');

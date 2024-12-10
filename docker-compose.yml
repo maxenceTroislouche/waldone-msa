@@ -25,7 +25,7 @@ services:
     labels:
       - "traefik.enable=true"
       # Règle de routage : quand on tape http://example.com -> ce service
-      - "traefik.http.routers.auth-service.rule=Host(`localhost`)"
+      - "traefik.http.routers.auth-service.rule=Host(`localhost`) && PathPrefix(`/auth`)"
       # On utilise l'entrypoint 'web' défini pour Traefik (port 80)
       - "traefik.http.routers.auth-service.entrypoints=web"
       # Définir le port interne sur lequel le service écoute (3000 dans ce cas)

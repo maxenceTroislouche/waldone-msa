@@ -3,7 +3,7 @@ http:
   middlewares:
     auth-forward:
       forwardAuth:
-        address: "http://auth-service:3000/validate"
+        address: "http://auth-service:3000/auth/validate"
         trustForwardHeader: true
         authResponseHeaders:
           - "X-User-Id"
