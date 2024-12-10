@@ -5,3 +5,5 @@ http:
       forwardAuth:
         address: "http://auth-service:3000/validate"
         trustForwardHeader: true
+        authResponseHeaders:
+          - "X-User-Id"
